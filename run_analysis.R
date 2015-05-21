@@ -23,7 +23,6 @@ library(tools)
 library(stringr)
 
 #############################################################################
-##  Merge the Training and test Sets to Create One Data Set
 #############################################################################
 ## Download the files from UCI site
     if(!file.exists("./data")){dir.create("./data")}
@@ -44,7 +43,6 @@ file_list <- function(path) {
     file.matrix
 }
 
-
 #############################################################################
 #   Create A Set of Feature Labels
 #############################################################################
@@ -53,8 +51,9 @@ file_list <- function(path) {
 # Label columns with Key and Description
     names(feature_labels)[1] <- "Feature_Key"
     names(feature_labels)[2] <- "Feature_Description"
-# Feature Labels without Special Characters    
+# Feature Labels without Special Characters for X column names    
     feature_labels_clean <- str_replace_all(feature_labels[,2], "[^[:alnum:]]", "")
+    Xcolnames <- as.character(feature_labels_clean)
 
 #############################################################################
 #   Create A Set of Activity Labels
@@ -68,52 +67,223 @@ file_list <- function(path) {
 #############################################################################
 ##  Organize the Test Data Set
 # 1) Load the Test Data Files
-# 2) X Test column names equal features.txt 1-561
+# 2) X Test column names equal feature_labels_clean
 # 3) Add activity_labels to y_test.txt
 # 4) Add label to Subject
 # 5) Combine subject_test, y_testNamed, X_testNamed
-# 6) Inertial signals directory files, assign column names to each
+# 6) Rename variables in Inertial signals files, assign column names to each
 # file name should be as total_acc_x1-128, total_acc_y1-128, etc.
 # 7) Combine dataset and each inertial signal text file
 #############################################################################
 # 1) Load the Files from the Test Directory
-
-test_fileList <- file_list("./data/UCI HAR Dataset/test")
-test_fileList <- rbind(test_fileList, file_list("./data/UCI HAR Dataset/test/Inertial Signals"))
-for( i in 1:length(test_fileList[,1])){
-    nam <- paste(file_path_sans_ext(test_fileList[i,1]))
-    assign(nam, read.table(test_fileList[i,2]))  ## read each file path and name
-}
-# 2) X_test column names equal features.txt 1-561
-Xcolnames <- as.character(feature_labels_clean)
-X_testNamed <- copy(X_test)
-setnames(X_testNamed, Xcolnames)
-
-# 3) Add activity_labels to y_test.txt
-y_test <- dplyr::rename(y_test, Activity_Key = V1)
-y_testNamed <- dplyr::left_join(y_test, activity_labels)
-
+    test_fileList <- file_list("./data/UCI HAR Dataset/test")
+    test_fileList <- rbind(test_fileList, file_list("./data/UCI HAR Dataset/test/Inertial Signals"))
+    for( i in 1:length(test_fileList[,1])){
+        nam <- paste(file_path_sans_ext(test_fileList[i,1]))
+        assign(nam, read.table(test_fileList[i,2]))  ## read each file path and name
+    }
+###########################################################################
+# 2) X_test column names equal feature_labels_clean
+    X_testNamed <- copy(X_test)
+    setnames(X_testNamed, Xcolnames)
+###########################################################################
+# 3) Add activity_labels to y_test
+    y_test <- dplyr::rename(y_test, Activity_Key = V1)
+    y_testNamed <- dplyr::left_join(y_test, activity_labels)
+###########################################################################
 # 4) Add heading label to Subject
-subject_test <- dplyr::rename(subject_test, Subject_Key = V1)
-
+    subject_test <- dplyr::rename(subject_test, Subject_Key = V1)
+###########################################################################
 # 5) Combine subject_test, y_testNamed, X_testNamed
-test_dataset <- cbind(subject_test, y_testNamed, X_testNamed)
+    test_dataset <- cbind(subject_test, y_testNamed, X_testNamed)
+###########################################################################
+# 6) Rename variables in Inertial signals files
+# listDF <- list(body_acc_x_test, body_acc_y_test, body_acc_z_test)    
+# file_path_sans_ext(test_fileList[,1])
+ 
+# body_acc_x_test    
+    colnam <- vector(mode="character")  
+    for( i in 1:ncol(body_acc_x_test)){
+        colnam[i] <- paste("body_acc_x",i,sep="")
+    }
+    setnames(body_acc_x_test, colnam)
+    
+# body_acc_y_test
+    colnam <- vector(mode="character")  
+    for(i in 1:ncol(body_acc_y_test)){
+        colnam[i] <- paste("body_acc_y", i, sep="")
+    }
+    setnames(body_acc_y_test, colnam) 
+
+#body_acc_z_test
+    colnam <- vector(mode="character")  
+    for(i in 1:ncol(body_acc_z_test)){
+        colnam[i] <- paste("body_acc_z", i, sep="")
+    }
+    setnames(body_acc_z_test, colnam) 
+
+# body_gyro_x_test    
+    colnam <- vector(mode="character")  
+    for( i in 1:ncol(body_gyro_x_test)){
+        colnam[i] <- paste("body_gyro_x",i,sep="")
+    }
+    setnames(body_gyro_x_test, colnam)
+    
+# body_gyro_y_test
+    colnam <- vector(mode="character")  
+    for(i in 1:ncol(body_gyro_y_test)){
+        colnam[i] <- paste("body_gyro_y", i, sep="")
+    }
+    setnames(body_gyro_y_test, colnam) 
+    
+#body_gyro_z_test
+    colnam <- vector(mode="character")  
+    for(i in 1:ncol(body_gyro_z_test)){
+        colnam[i] <- paste("body_gyro_z", i, sep="")
+    }
+    setnames(body_gyro_z_test, colnam) 
+# total_acc_x_test    
+    colnam <- vector(mode="character")  
+    for( i in 1:ncol(total_acc_x_test)){
+        colnam[i] <- paste("total_acc_x",i,sep="")
+    }
+    setnames(total_acc_x_test, colnam)
+
+# total_acc_y_test
+    colnam <- vector(mode="character")  
+    for(i in 1:ncol(total_acc_y_test)){
+        colnam[i] <- paste("total_acc_y", i, sep="")
+    }
+    setnames(total_acc_y_test, colnam) 
+
+#total_acc_z_test
+    colnam <- vector(mode="character")  
+    for(i in 1:ncol(total_acc_z_test)){
+        colnam[i] <- paste("total_acc_z", i, sep="")
+    }
+    setnames(total_acc_z_test, colnam) 
+#############################################################################
+# 7) Combine dataset and each inertial signal text file
+inertiaData <- cbind(body_acc_x_test, body_acc_y_test, 
+                      body_acc_z_test, body_gyro_x_test, body_gyro_y_test,
+                      body_gyro_z_test, total_acc_x_test, total_acc_y_test, 
+                      total_acc_z_test)
+test_dataset <- cbind(test_dataset, inertiaData)
 
 #############################################################################
 ##  Organize the Training Data Set
-# 1) X Train column names equal features.txt 1-561
-# 2) add activity_labels to y_train.txt
-# 3) cbind subject_train.txt, y_train.txt, X_train.txt
-# 4) Inertial signals directory files, assign column names to each
-#     file name should be as total_acc_x1-128, total_acc_y1-128, etc.
-# 5) cbind dataset and each inertial signal text file
+# 1) Load the Training Data Files
+# 3) Add activity_labels to y_train
+# 4) Add label to Subject
+# 5) Combine subject_train, y_trainNamed, X_trainNamed
+# 6) Rename variables in Inertial signals files, assign column names to each
+# file name should be as total_acc_x1-128, total_acc_y1-128, etc.
+# 7) Combine dataset and each inertial signal file
 #############################################################################
+# 1) Load the Files from the train Directory
+    train_fileList <- file_list("./data/UCI HAR Dataset/train")
+    train_fileList <- rbind(train_fileList, file_list("./data/UCI HAR Dataset/train/Inertial Signals"))
+    for( i in 1:length(train_fileList[,1])){
+        nam <- paste(file_path_sans_ext(train_fileList[i,1]))
+        assign(nam, read.table(train_fileList[i,2]))  ## read each file path and name
+    }
+###########################################################################
+# 2) X_train column names equal feature_labels_clean
+## Already set Xcolnames <- as.character(feature_labels_clean)
+    X_trainNamed <- copy(X_train)
+    setnames(X_trainNamed, Xcolnames)
+###########################################################################
+# 3) Add activity_labels to y_train.txt
+    y_train <- dplyr::rename(y_train, Activity_Key = V1)
+    y_trainNamed <- dplyr::left_join(y_train, activity_labels)
+###########################################################################
+# 4) Add heading label to Subject
+    subject_train <- dplyr::rename(subject_train, Subject_Key = V1)
+###########################################################################
+# 5) Combine subject_train, y_trainNamed, X_trainNamed
+train_dataset <- cbind(subject_train, y_trainNamed, X_trainNamed)
+###########################################################################
+# 6) Rename variables in Inertial signals files
+# listDF <- list(body_acc_x_train, body_acc_y_train, body_acc_z_train)    
+# file_path_sans_ext(train_fileList[,1])
+
+# body_acc_x_train    
+colnam <- vector(mode="character")  
+for( i in 1:ncol(body_acc_x_train)){
+    colnam[i] <- paste("body_acc_x",i,sep="")
+}
+setnames(body_acc_x_train, colnam)
+
+# body_acc_y_train
+colnam <- vector(mode="character")  
+for(i in 1:ncol(body_acc_y_train)){
+    colnam[i] <- paste("body_acc_y", i, sep="")
+}
+setnames(body_acc_y_train, colnam) 
+
+#body_acc_z_train
+colnam <- vector(mode="character")  
+for(i in 1:ncol(body_acc_z_train)){
+    colnam[i] <- paste("body_acc_z", i, sep="")
+}
+setnames(body_acc_z_train, colnam) 
+
+# body_gyro_x_train    
+colnam <- vector(mode="character")  
+for( i in 1:ncol(body_gyro_x_train)){
+    colnam[i] <- paste("body_gyro_x",i,sep="")
+}
+setnames(body_gyro_x_train, colnam)
+
+# body_gyro_y_train
+colnam <- vector(mode="character")  
+for(i in 1:ncol(body_gyro_y_train)){
+    colnam[i] <- paste("body_gyro_y", i, sep="")
+}
+setnames(body_gyro_y_train, colnam) 
+
+#body_gyro_z_train
+colnam <- vector(mode="character")  
+for(i in 1:ncol(body_gyro_z_train)){
+    colnam[i] <- paste("body_gyro_z", i, sep="")
+}
+setnames(body_gyro_z_train, colnam) 
+# total_acc_x_train    
+colnam <- vector(mode="character")  
+for( i in 1:ncol(total_acc_x_train)){
+    colnam[i] <- paste("total_acc_x",i,sep="")
+}
+setnames(total_acc_x_train, colnam)
+
+# total_acc_y_train
+colnam <- vector(mode="character")  
+for(i in 1:ncol(total_acc_y_train)){
+    colnam[i] <- paste("total_acc_y", i, sep="")
+}
+setnames(total_acc_y_train, colnam) 
+
+#total_acc_z_train
+colnam <- vector(mode="character")  
+for(i in 1:ncol(total_acc_z_train)){
+    colnam[i] <- paste("total_acc_z", i, sep="")
+}
+setnames(total_acc_z_train, colnam) 
+#############################################################################
+# 7) Combine dataset and each inertial signal text file
+inertiaData <- cbind(body_acc_x_train, body_acc_y_train, 
+                     body_acc_z_train, body_gyro_x_train, body_gyro_y_train,
+                     body_gyro_z_train, total_acc_x_train, total_acc_y_train, 
+                     total_acc_z_train)
+train_dataset <- cbind(train_dataset, inertiaData)
+
+
+
 
 #############################################################################
 ##  Combing the Full Test and full Training Data Sets
 
 #############################################################################
-
+dataset <- rbind(test_dataset, train_dataset)
 
 
 #####  Read label files
@@ -135,14 +305,14 @@ test_dataset <- cbind(subject_test, y_testNamed, X_testNamed)
     head(feature_labels)
 
 ##########  read subject labels files 
-    #### read test subject IDs
-    data_dir <- "./UCI HAR Dataset/test"
+    #### read train subject IDs
+    data_dir <- "./UCI HAR Dataset/train"
     paths <- dir(data_dir, pattern = "\\.txt$", full.names = TRUE)
-    testSubjectIDs <- read.table(paths[1])
+    trainSubjectIDs <- read.table(paths[1])
     # Label columns with Key and Description
-    names(testSubjectIDs)[1] <- "SubjectID"
-    head(testSubjectIDs)
-    tail(testSubjectIDs)
+    names(trainSubjectIDs)[1] <- "SubjectID"
+    head(trainSubjectIDs)
+    tail(trainSubjectIDs)
 
     #### read train subject IDs
     data_dir <- "./UCI HAR Dataset/train"
@@ -161,23 +331,23 @@ test_dataset <- cbind(subject_test, y_testNamed, X_testNamed)
 # that records the original file name (because the file name is often the value
 # of an important variable). 
 # 3. Combine all tables into a single table.
-data_dir <- "./UCI HAR Dataset/test/Inertial Signals"
+data_dir <- "./UCI HAR Dataset/train/Inertial Signals"
 paths <- dir(data_dir, pattern = "\\.txt$", full.names = TRUE)
 names(paths) <- basename(paths)
-testInertialSignals <- ldply(paths, read.csv, stringsAsFactors = FALSE)
-View(testInertialSignals)
+trainInertialSignals <- ldply(paths, read.csv, stringsAsFactors = FALSE)
+View(trainInertialSignals)
 
 ####  read body acc files as a test to see them.  each have 128 columns( 128 readings per window), 2947 rows.
-body_acc_x_test <- read.table(paths[1])
-View(body_acc_x_test)
-body_acc_y_test <- read.table(paths[2])
-View(body_acc_y_test)
-body_acc_z_test <- read.table(paths[3])
-View(body_acc_z_test)
+body_acc_x_train <- read.table(paths[1])
+View(body_acc_x_train)
+body_acc_y_train <- read.table(paths[2])
+View(body_acc_y_train)
+body_acc_z_train <- read.table(paths[3])
+View(body_acc_z_train)
 
-### Test Data Directory read subject_test, X_test, y_test
+### Test Data Directory read subject_train, X_train, y_train
     # set data directory and paths for reading the files
-    data_dir <- "./UCI HAR Dataset/test"
+    data_dir <- "./UCI HAR Dataset/train"
     paths <- dir(data_dir, pattern = "\\.txt$", full.names = TRUE)
     names(paths) <- basename(paths)
     
@@ -186,8 +356,8 @@ View(body_acc_z_test)
     # Label columns with Key and Description
     names(subject)[1] <- "SubjectID"
     View(subject)
-    testData <- read.table(paths[2])
-    View(testData)
+    trainData <- read.table(paths[2])
+    View(trainData)
     labels <- read.table(paths[3])
     View(labels)
     
