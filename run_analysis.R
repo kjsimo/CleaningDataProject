@@ -1,10 +1,10 @@
 # You should create one R script called run_analysis.R that does the following. 
-# 1) Merges the training and the test sets to create one data set. 
-# 2) Extracts only the measurements on the mean and standard deviation for each measurement. 
-# 3) Uses descriptive activity names to name the activities in the data set 
-# 4) Appropriately labels the data set with descriptive variable names. 
-# 5) From the data set in step 4, creates a second, independent tidy data set with the
-#   average of each variable for each activity and each subject.
+# 1) Merges the training and the test sets to create one data set. 2) Extracts
+# only the measurements on the mean and standard deviation for each measurement.
+# 3) Uses descriptive activity names to name the activities in the data set 4)
+# Appropriately labels the data set with descriptive variable names. 5) From the
+# data set in step 4, creates a second, independent tidy data set with the 
+# average of each variable for each activity and each subject.
 
 library(dplyr)
 library(tidyr)
@@ -289,36 +289,13 @@ test_dataset <- cbind(test_dataset, inertiaData)
 #############################################################################
 # Average of each variable for each activity and each subject
 #############################################################################
-# #   DT[i, j, by] Take DT, subset rows using i, then calculate j, grouped by by.
-# # Get all the flights with “JFK” as the origin airport in the month of June.
-# ans <- flights[origin == "JFK" & month == 6L]
 
-class(selected.data)
 DT <- as.data.table(selected.data)
-class(DT)
 DT <- mutate(DT, Subject_Key = as.numeric(Subject_Key))
 DT <- DT[order(Subject_Key)]
-DT[,.N,by=.(Activity_Description, Subject_Key)]
-average.activity <- copy(DT)
-DTnames <- as.list(names(DT)[1:89])
 
-# average.activity <- DT[, .(tBodyAccmeanX=mean(tBodyAccmeanX), 
-#                            tBodyAccmeanY=mean(tBodyAccmeanY), 
-#                            tBodyAccmeanZ=mean(tBodyAccmeanZ)), 
-#                                      by = .(Activity_Description, Subject_Key)]
-DT[, lapply(.SD, mean), by=ID]
-
+#############################################################################
+# Compute the mean of each variable and group by activity and subject
+#############################################################################
 average.activity <- DT[, lapply(.SD, mean), 
                        keyby = .(Activity_Description, Subject_Key)]
-
-average.activity <- DT[, .(tBodyAccmeanX=mean(tBodyAccmeanX), 
-                           tBodyAccmeanY=mean(tBodyAccmeanY), 
-                           tBodyAccmeanZ=mean(tBodyAccmeanZ)), 
-                       keyby = .(Activity_Description, Subject_Key)]
-
-#     average.activity <-  mutate(average.activity(Subject_Key = as.numeric(Subject_Key))
-#                 %>% group_by(Activity_Description)
-#                 %>% summarize(tBodyAccmeanX = mean(tBodyAccmeanX, na.rm = TRUE),
-#                               tBodyAccmeanY = mean(tBodyAccmeanY, na.rm = TRUE),
-#                               tBodyAccmeanZ = mean(tBodyAccmeanZ, na.rm = TRUE))
-# 
