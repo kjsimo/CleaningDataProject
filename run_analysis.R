@@ -301,7 +301,7 @@ average.activity <- DT[, lapply(.SD, mean),
                        keyby = .(Activity_Description, Subject_Key)]
 
 #############################################################################
-# Ouput a csv of the dataset to the /data directory
+# Output a csv of the dataset to the /data directory
 #############################################################################
 write.csv(average.activity, "./data/averages_tidy.csv")
 write.table(average.activity, "./data/averages_tidy.txt", row.name=FALSE)

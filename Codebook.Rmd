@@ -5,12 +5,28 @@ date: "May 24, 2015"
 output: html_document
 ---
 # Codebook for run_analysis.R script
-## Please refer to run_analysis.html for an R notebook with details on the R script.
+### Please refer to run_analysis.html for an R notebook with details on the R script.
 
-## Steps performed by the run_analysi.R script
+### Steps performed by the run_analysis.R script
 1. Download the zip files from UCI site and unzip the files into a /data subdirectory
 2. Set up a paths variable to contain the paths of the unzipped files.
-```{r} data_dir <- "./data/UCI HAR Dataset"
+```{r} 
+    data_dir <- "./data/UCI HAR Dataset"
     paths <- list.files(data_dir, full.names = TRUE, recursive = TRUE)
 ```
-
+3. Create A Set of Feature Labels for Xtrain and Xtest Column names from features.txt and remove Special Characters.
+4. Create A Set of Activity Labels and label the Key and Description columns.
+5. Organize the Test Data Files 
++ add column names equal feature_labels_clean
++ Add activity_labels to y_test.txt
++ Add heading label to Subject
++ Combine subject_test, y_testNamed, X_testNamed
++ Rename variables in each of the Inertial signals files by assigning column names to each such as; total_acc_x1-128, total_acc_y1-128, etc. 
++ Combine dataset and each inertial signal text file and create test_dataset.
+6. Organize the Training Data files
++ follow the same steps as the Test Data files
++ create train_dataset
+7. Combine test_dataset and train_dataset
+8. Extract the measurements on the mean and standard deviation for each measurement
+9. Compute the mean of each variable and group by activity and subject
+10.  Output a csv of the dataset to the /data directory
