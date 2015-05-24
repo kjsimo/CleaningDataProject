@@ -286,3 +286,39 @@ test_dataset <- cbind(test_dataset, inertiaData)
     selected.data.mean <- dataset[ ,grep("mean", colnames(dataset), ignore.case = TRUE)]
     selected.data.std <- dataset[ ,grep("std", colnames(dataset), ignore.case = TRUE)]
     selected.data <- cbind(selected.data, selected.data.mean, selected.data.std)
+#############################################################################
+# Average of each variable for each activity and each subject
+#############################################################################
+# #   DT[i, j, by] Take DT, subset rows using i, then calculate j, grouped by by.
+# # Get all the flights with “JFK” as the origin airport in the month of June.
+# ans <- flights[origin == "JFK" & month == 6L]
+
+class(selected.data)
+DT <- as.data.table(selected.data)
+class(DT)
+DT <- mutate(DT, Subject_Key = as.numeric(Subject_Key))
+DT <- DT[order(Subject_Key)]
+DT[,.N,by=.(Activity_Description, Subject_Key)]
+average.activity <- copy(DT)
+DTnames <- as.list(names(DT)[1:89])
+
+# average.activity <- DT[, .(tBodyAccmeanX=mean(tBodyAccmeanX), 
+#                            tBodyAccmeanY=mean(tBodyAccmeanY), 
+#                            tBodyAccmeanZ=mean(tBodyAccmeanZ)), 
+#                                      by = .(Activity_Description, Subject_Key)]
+DT[, lapply(.SD, mean), by=ID]
+
+average.activity <- DT[, lapply(.SD, mean), 
+                       keyby = .(Activity_Description, Subject_Key)]
+
+average.activity <- DT[, .(tBodyAccmeanX=mean(tBodyAccmeanX), 
+                           tBodyAccmeanY=mean(tBodyAccmeanY), 
+                           tBodyAccmeanZ=mean(tBodyAccmeanZ)), 
+                       keyby = .(Activity_Description, Subject_Key)]
+
+#     average.activity <-  mutate(average.activity(Subject_Key = as.numeric(Subject_Key))
+#                 %>% group_by(Activity_Description)
+#                 %>% summarize(tBodyAccmeanX = mean(tBodyAccmeanX, na.rm = TRUE),
+#                               tBodyAccmeanY = mean(tBodyAccmeanY, na.rm = TRUE),
+#                               tBodyAccmeanZ = mean(tBodyAccmeanZ, na.rm = TRUE))
+# 
