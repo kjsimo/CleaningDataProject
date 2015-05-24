@@ -24,10 +24,12 @@ output: html_document
 + Combine subject_test, y_testNamed, X_testNamed
 + Rename variables in each of the Inertial signals files by assigning column names to each such as; total_acc_x1-128, total_acc_y1-128, etc. 
 + Combine dataset and each inertial signal text file and create test_dataset.
+
 6. Organize the Training Data files
 
 + follow the same steps as the Test Data files
 + create train_dataset
+
 7. Combine test_dataset and train_dataset
 8. Extract the measurements on the mean and standard deviation for each measurement
 9. Compute the mean of each variable and group by activity and subject
