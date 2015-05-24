@@ -17,6 +17,7 @@ output: html_document
 3. Create A Set of Feature Labels for Xtrain and Xtest Column names from features.txt and remove Special Characters.
 4. Create A Set of Activity Labels and label the Key and Description columns.
 5. Organize the Test Data Files 
+
 + add column names equal feature_labels_clean
 + Add activity_labels to y_test.txt
 + Add heading label to Subject
@@ -24,6 +25,7 @@ output: html_document
 + Rename variables in each of the Inertial signals files by assigning column names to each such as; total_acc_x1-128, total_acc_y1-128, etc. 
 + Combine dataset and each inertial signal text file and create test_dataset.
 6. Organize the Training Data files
+
 + follow the same steps as the Test Data files
 + create train_dataset
 7. Combine test_dataset and train_dataset
