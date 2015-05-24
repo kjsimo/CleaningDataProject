@@ -304,3 +304,4 @@ average.activity <- DT[, lapply(.SD, mean),
 # Ouput a csv of the dataset to the /data directory
 #############################################################################
 write.csv(average.activity, "./data/averages_tidy.csv")
+write.table(average.activity, "./data/averages_tidy.txt", row.name=FALSE)
